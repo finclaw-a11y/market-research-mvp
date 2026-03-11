@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: market-research-api
+    runtime: python
+    startCommand: gunicorn app:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    buildCommand: pip install -r requirements.txt
+    rootDir: backend
+    port: 8000
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}
+      - key: SUPABASE_URL
+        fromDatabase:
+          name: supabase_url
+      - key: SUPABASE_ANON_KEY
+        fromDatabase:
+          name: supabase_anon_key
+      - key: STRIPE_SECRET_KEY
+        fromDatabase:
+          name: stripe_secret_key
+      - key: STRIPE_WEBHOOK_SECRET
+        fromDatabase:
+          name: stripe_webhook_secret
+      - key: ANTHROPIC_API_KEY
+        fromDatabase:
+          name: anthropic_api_key
+      - key: FRONTEND_URL
+        value: https://market-research.vercel.app
+      - key: CORS_ORIGINS
+        value: https://market-research.vercel.app
+
+  - type: pserv
+    name: postgres
+    runtime: postgres
+    plan: starter
+    ipAllowList: []
+    envVars:
+      - key: POSTGRES_USER
+        value: ${POSTGRES_USER}
+      - key: POSTGRES_PASSWORD
+        value: ${POSTGRES_PASSWORD}
+      - key: POSTGRES_DB
+        value: market_research
+
+databases:
+  - name: market_research
+    plan: starter
+    postgresSingleZone: true
+    region: ohio

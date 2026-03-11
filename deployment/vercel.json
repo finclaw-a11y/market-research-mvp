@@ -1,0 +1,28 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": {
+      "description": "Backend API URL"
+    },
+    "NEXT_PUBLIC_SUPABASE_URL": {
+      "description": "Supabase project URL"
+    },
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
+      "description": "Supabase anonymous key"
+    },
+    "NEXT_PUBLIC_STRIPE_PUBLIC_KEY": {
+      "description": "Stripe publishable key"
+    }
+  },
+  "regions": ["iad1", "sfo1"],
+  "functions": {
+    "api/**": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}

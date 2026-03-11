@@ -1,0 +1,38 @@
+$schema: https://railway.app/railway.schema.json
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    variables:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: market_research
+    volumes:
+      - /var/lib/postgresql/data
+    healthCheck:
+      test: ["CMD-SHELL", "pg_isready -U ${{ secrets.POSTGRES_USER }}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    startCommand: gunicorn app:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    port: 8000
+    environment:
+      DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ services.postgres.host }}:5432/market_research
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+      CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+    depends_on:
+      - postgres
+
+variables:
+  FRONTEND_URL: https://market-research.vercel.app
+  CORS_ORIGINS: https://market-research.vercel.app
