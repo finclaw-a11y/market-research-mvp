@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import '../styles/dashboard-colors.css';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -11,6 +12,8 @@ export default function Dashboard() {
   const [insights, setInsights] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [dragActive, setDragActive] = useState(false);
+  const [fileName, setFileName] = useState('');
 
   // Initialize Supabase and check auth
   useEffect(() => {
@@ -51,8 +54,36 @@ export default function Dashboard() {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
+      setFileName(selectedFile.name);
       setError('');
       setSuccess('');
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile && droppedFile.name.endsWith('.csv')) {
+      setFile(droppedFile);
+      setFileName(droppedFile.name);
+      setError('');
+      setSuccess('');
+    } else {
+      setError('Please drop a CSV file');
     }
   };
 
@@ -112,6 +143,7 @@ export default function Dashboard() {
         setInsights(result.insights);
         setSuccess('Insights generated successfully!');
         setFile(null);
+        setFileName('');
         // Reset file input
         const fileInput = document.getElementById('csvFile');
         if (fileInput) fileInput.value = '';
@@ -130,83 +162,110 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Loading...</h2>
-          <p className="text-gray-600">Checking authentication...</p>
+      <div style={{ 
+        background: 'linear-gradient(135deg, #0F1A1F 0%, #1A2A35 100%)',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className="loading-spinner" style={{ margin: '0 auto 24px' }}></div>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#00D9FF', marginBottom: '12px' }}>
+            Loading...
+          </h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Checking authentication...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="dashboard-container">
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Vervix Dashboard</h1>
+      <header className="dashboard-header">
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h1 className="header-title">VERVIX DASHBOARD</h1>
+              <p className="header-subtitle">Professional Market Insights & Data Analysis</p>
+            </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition"
+              className="btn-outline-cyan"
+              style={{ marginBottom: '12px' }}
             >
               Logout
             </button>
           </div>
-          <p className="text-gray-600 mt-2">Welcome, {user?.email}</p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', marginTop: '12px' }}>
+            Welcome, <strong>{user?.email}</strong>
+          </p>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px', marginBottom: '32px' }}>
           {/* Upload Section */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Upload CSV Data</h2>
+          <div>
+            <div className="dashboard-card" style={{ padding: '28px', borderRadius: '12px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#00D9FF', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                📊 Upload CSV Data
+              </h2>
 
-              {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                  {error}
-                </div>
-              )}
+              {error && <div className="alert-error">{error}</div>}
+              {success && <div className="alert-success">{success}</div>}
 
-              {success && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                  {success}
+              <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Drag and Drop Zone */}
+                <div
+                  className={`upload-zone ${dragActive ? 'drag-active' : ''}`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('csvFile').click()}
+                >
+                  <div className="upload-icon">📁</div>
+                  <div className="upload-text">
+                    {fileName ? `✓ ${fileName}` : 'Drag & drop CSV here'}
+                  </div>
+                  <div className="upload-hint">or click to browse</div>
                 </div>
-              )}
 
-              <form onSubmit={handleUpload} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select CSV File
-                  </label>
-                  <input
-                    id="csvFile"
-                    type="file"
-                    accept=".csv"
-                    onChange={handleFileChange}
-                    required
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
-                    CSV files with headers and data rows
-                  </p>
-                </div>
+                <input
+                  id="csvFile"
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileChange}
+                  required
+                  style={{ display: 'none' }}
+                />
 
                 <button
                   type="submit"
                   disabled={!file || loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50"
+                  className="btn-primary"
+                  style={{ width: '100%', padding: '12px 24px' }}
                 >
-                  {loading ? 'Processing...' : 'Analyze Data'}
+                  {loading ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <div className="loading-spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></div>
+                      Processing...
+                    </span>
+                  ) : (
+                    '🚀 Analyze Data'
+                  )}
                 </button>
               </form>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">Example CSV:</h3>
-                <pre className="text-xs text-gray-700 overflow-x-auto">
+              {/* Example Section */}
+              <div style={{ marginTop: '28px', padding: '16px', background: 'rgba(0, 217, 255, 0.1)', borderRadius: '8px', borderLeft: '3px solid #00D9FF' }}>
+                <h3 style={{ fontWeight: '600', color: '#00D9FF', marginBottom: '10px', fontSize: '13px', textTransform: 'uppercase' }}>
+                  Example CSV Format:
+                </h3>
+                <pre style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', overflow: 'auto', margin: '0', lineHeight: '1.4' }}>
 {`Company,Market,Revenue
 TechStartup,AI,500000
 DataCorp,Analytics,1200000
@@ -217,20 +276,21 @@ CloudSoft,Infrastructure,800000`}
           </div>
 
           {/* Insights Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Market Insights</h2>
+          <div>
+            <div className="dashboard-card" style={{ padding: '28px', borderRadius: '12px', minHeight: '300px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#8B5CF6', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                💡 Market Insights
+              </h2>
 
               {!insights ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500">
-                    Upload a CSV file to see AI-generated market insights
-                  </p>
+                <div style={{ textAlign: 'center', padding: '60px 20px', color: 'rgba(255, 255, 255, 0.5)' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+                  <p>Upload a CSV file to see AI-generated market insights</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="prose prose-sm max-w-none">
-                    <div className="whitespace-pre-wrap text-gray-700 bg-gray-50 p-4 rounded-lg text-sm leading-relaxed">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="insight-card">
+                    <div className="insight-content" style={{ whiteSpace: 'pre-wrap' }}>
                       {typeof insights === 'string' ? insights : JSON.stringify(insights, null, 2)}
                     </div>
                   </div>
@@ -245,18 +305,64 @@ CloudSoft,Infrastructure,800000`}
                           typeof insights === 'string' ? insights : JSON.stringify(insights, null, 2)
                         )
                       );
-                      element.setAttribute('download', 'insights.txt');
+                      element.setAttribute('download', 'vervix-insights.txt');
                       element.style.display = 'none';
                       document.body.appendChild(element);
                       element.click();
                       document.body.removeChild(element);
                     }}
-                    className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition"
+                    className="btn-secondary"
+                    style={{ width: '100%', padding: '12px 24px' }}
                   >
-                    Download Insights
+                    ⬇️ Download Insights
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+          <div className="insight-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#00D9FF', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                  Status
+                </div>
+                <span className="badge-cyan" style={{ marginTop: '8px' }}>
+                  Ready
+                </span>
+              </div>
+              <div style={{ fontSize: '28px' }}>✓</div>
+            </div>
+          </div>
+
+          <div className="insight-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#8B5CF6', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                  Engine
+                </div>
+                <span className="badge-purple" style={{ marginTop: '8px' }}>
+                  AI-Powered
+                </span>
+              </div>
+              <div style={{ fontSize: '28px' }}>⚡</div>
+            </div>
+          </div>
+
+          <div className="insight-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#10B981', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+                  Version
+                </div>
+                <span className="badge-success" style={{ marginTop: '8px' }}>
+                  Option C
+                </span>
+              </div>
+              <div style={{ fontSize: '28px' }}>🎯</div>
             </div>
           </div>
         </div>

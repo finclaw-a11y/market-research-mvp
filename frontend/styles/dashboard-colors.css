@@ -1,0 +1,491 @@
+/* ============================================
+   VERVIX BRAND COLORS & DASHBOARD STYLES
+   ============================================ */
+
+:root {
+  /* Primary Colors */
+  --vervix-dark: #0F1A1F;
+  --vervix-cyan: #00D9FF;
+  --vervix-purple: #8B5CF6;
+  --vervix-text: #FFFFFF;
+  --vervix-secondary: #1A2A35;
+  
+  /* Additional shades for gradients and hover states */
+  --vervix-cyan-light: #33E5FF;
+  --vervix-cyan-dark: #00B8D4;
+  --vervix-purple-light: #A78BFA;
+  --vervix-purple-dark: #7C3AED;
+  
+  /* Semantic colors */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+}
+
+/* ============================================
+   DARK THEME - DASHBOARD BASE
+   ============================================ */
+
+.dashboard-container {
+  background: linear-gradient(135deg, #0F1A1F 0%, #1A2A35 100%);
+  color: #FFFFFF;
+  min-height: 100vh;
+}
+
+.dashboard-bg {
+  background-color: var(--vervix-dark);
+  color: var(--vervix-text);
+}
+
+.dashboard-card {
+  background-color: var(--vervix-secondary);
+  border: 1px solid rgba(0, 217, 255, 0.1);
+  color: var(--vervix-text);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: 0 8px 12px rgba(0, 217, 255, 0.15);
+}
+
+/* ============================================
+   SIDEBAR STYLES
+   ============================================ */
+
+.sidebar {
+  background: linear-gradient(180deg, #0F1A1F 0%, #1A2A35 100%);
+  border-right: 2px solid rgba(0, 217, 255, 0.2);
+}
+
+.sidebar-item {
+  color: rgba(255, 255, 255, 0.7);
+  padding: 12px 16px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  color: var(--vervix-cyan);
+  background-color: rgba(0, 217, 255, 0.1);
+  border-left-color: var(--vervix-cyan);
+}
+
+.sidebar-item.active {
+  color: var(--vervix-cyan);
+  background-color: rgba(0, 217, 255, 0.15);
+  border-left-color: var(--vervix-cyan);
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.1);
+}
+
+/* ============================================
+   BUTTONS & INPUTS
+   ============================================ */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--vervix-cyan) 0%, var(--vervix-cyan-dark) 100%);
+  color: var(--vervix-dark);
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 217, 255, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--vervix-purple) 0%, var(--vervix-purple-dark) 100%);
+  color: var(--vervix-text);
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-outline-cyan {
+  border: 2px solid var(--vervix-cyan);
+  color: var(--vervix-cyan);
+  background: transparent;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-cyan:hover {
+  background: rgba(0, 217, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+/* Input Styles */
+.input-dark {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  color: var(--vervix-text);
+  border-radius: 6px;
+  padding: 10px 14px;
+  transition: all 0.3s ease;
+}
+
+.input-dark:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--vervix-cyan);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+/* ============================================
+   FILE UPLOAD ZONE
+   ============================================ */
+
+.upload-zone {
+  border: 2px dashed var(--vervix-cyan);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-zone:hover {
+  border-color: var(--vervix-cyan-light);
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
+}
+
+.upload-zone.drag-active {
+  border-color: var(--vervix-cyan-light);
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
+}
+
+.upload-icon {
+  color: var(--vervix-cyan);
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.upload-text {
+  color: var(--vervix-text);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.upload-hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+/* ============================================
+   DATA TABLE STYLES
+   ============================================ */
+
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.data-table thead {
+  background: linear-gradient(90deg, var(--vervix-secondary) 0%, rgba(139, 92, 246, 0.15) 100%);
+  border-bottom: 2px solid var(--vervix-cyan);
+}
+
+.data-table th {
+  color: var(--vervix-cyan);
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.data-table td {
+  color: var(--vervix-text);
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.data-table tbody tr:hover {
+  background-color: rgba(0, 217, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* ============================================
+   BADGE & STATUS STYLES
+   ============================================ */
+
+.badge-cyan {
+  background: rgba(0, 217, 255, 0.15);
+  color: var(--vervix-cyan);
+  border: 1px solid var(--vervix-cyan);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--vervix-purple-light);
+  border: 1px solid var(--vervix-purple);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+  border: 1px solid var(--success);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   INSIGHT CARD STYLES
+   ============================================ */
+
+.insight-card {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  border-color: var(--vervix-cyan);
+  box-shadow: 0 8px 25px rgba(0, 217, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.insight-title {
+  color: var(--vervix-cyan);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.insight-content {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ============================================
+   HEADER STYLES
+   ============================================ */
+
+.dashboard-header {
+  background: linear-gradient(90deg, var(--vervix-dark) 0%, var(--vervix-secondary) 100%);
+  border-bottom: 2px solid var(--vervix-cyan);
+  padding: 24px 0;
+  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
+}
+
+.header-title {
+  color: var(--vervix-text);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--vervix-cyan) 0%, var(--vervix-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* ============================================
+   ALERT & MESSAGE STYLES
+   ============================================ */
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #FECACA;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #86EFAC;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.alert-info {
+  background: rgba(0, 217, 255, 0.15);
+  border: 1px solid rgba(0, 217, 255, 0.5);
+  color: #7DFFFF;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+/* ============================================
+   LOADING & ANIMATION STYLES
+   ============================================ */
+
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 217, 255, 0);
+  }
+}
+
+@keyframes glow-cyan {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+  }
+}
+
+.loading-spinner {
+  border: 3px solid rgba(0, 217, 255, 0.2);
+  border-top: 3px solid var(--vervix-cyan);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pulse-animation {
+  animation: pulse-cyan 2s infinite;
+}
+
+.glow-animation {
+  animation: glow-cyan 2s ease-in-out infinite;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 16px 0;
+  }
+
+  .header-title {
+    font-size: 24px;
+  }
+
+  .upload-zone {
+    padding: 24px 16px;
+  }
+
+  .insight-card {
+    padding: 16px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-cyan {
+  color: var(--vervix-cyan);
+}
+
+.text-purple {
+  color: var(--vervix-purple);
+}
+
+.bg-cyan-glow {
+  background: rgba(0, 217, 255, 0.1);
+  border-radius: 8px;
+}
+
+.border-cyan {
+  border: 1px solid var(--vervix-cyan);
+}
+
+.border-purple {
+  border: 1px solid var(--vervix-purple);
+}
+
+.shadow-cyan {
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.shadow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}

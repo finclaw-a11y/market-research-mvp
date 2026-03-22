@@ -1,3 +1,5 @@
+@import './dashboard-colors.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,25 +20,27 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #0F1A1F;
+  color: #FFFFFF;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Vervix themed */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgba(26, 42, 53, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #00D9FF 0%, #8B5CF6 100%);
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(180deg, #33E5FF 0%, #A78BFA 100%);
 }
 
 /* Common utilities */
