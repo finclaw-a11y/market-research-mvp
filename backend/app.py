@@ -10,7 +10,7 @@ from database import engine, Base
 from models import User, DataUpload, UploadedData, InsightAnalysis, Subscription
 
 # Import routes
-from routes import users, uploads, insights, subscriptions
+from routes import users, uploads, insights, subscriptions, email, webhooks
 
 # Load environment variables
 load_dotenv()
@@ -55,6 +55,8 @@ app.include_router(users.router)
 app.include_router(uploads.router)
 app.include_router(insights.router)
 app.include_router(subscriptions.router)
+app.include_router(email.router, tags=["email"])
+app.include_router(webhooks.router, tags=["webhooks"])
 
 # Health check endpoint
 @app.get("/health")
