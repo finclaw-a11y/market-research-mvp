@@ -16,7 +16,7 @@ class ClaudeInsightGenerator:
     
     def __init__(self):
         self.client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-        self.model = "claude-3-5-haiku-20241022"
+        self.model = "claude-haiku-4-5"
     
     def generate_insights(self, data: List[Dict[str, Any]], filename: str) -> Tuple[Dict[str, Any], int, float]:
         """

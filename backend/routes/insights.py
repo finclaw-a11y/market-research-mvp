@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Body
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime, timezone
 from database import get_db
 from models import InsightAnalysis, DataUpload, UploadedData, User, UploadStatus
@@ -33,10 +33,20 @@ class CSVAnalysisRequest(BaseModel):
     data: list
     headers: list
     filename: str = "analysis.csv"
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "user_id": "user123",
+                "data": [{"col1": "val1", "col2": "val2"}],
+                "headers": ["col1", "col2"],
+                "filename": "test.csv"
+            }
+        }
 
 @router.post("")
 async def analyze_csv(
-    request: CSVAnalysisRequest,
+    request: dict,
     db: Session = Depends(get_db)
 ):
     """
@@ -44,15 +54,20 @@ async def analyze_csv(
     This is the main endpoint the frontend uses.
     """
     try:
-        user_id = request.user_id
-        csv_data = request.data
-        headers = request.headers
-        filename = request.filename
+        logger.info(f"Received CSV analysis request")
+        user_id = request.get("user_id")
+        csv_data = request.get("data", [])
+        headers = request.get("headers", [])
+        filename = request.get("filename", "analysis.csv")
         
-        # Verify user exists
+        # Verify user exists (or create if doesn't exist)
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            # For now, auto-create user on first request
+            logger.info(f"Creating new user: {user_id}")
+            user = User(id=user_id, email=f"{user_id}@vervix.local")
+            db.add(user)
+            db.flush()
         
         # Validate data
         if not csv_data or len(csv_data) == 0:
