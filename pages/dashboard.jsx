@@ -140,20 +140,23 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen" style={{ backgroundColor: '#0F1A1F' }}>
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="shadow-lg" style={{ backgroundColor: '#1A2A35', borderBottom: '2px solid #00D9FF' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Vervix Dashboard</h1>
+            <h1 className="text-3xl font-bold" style={{ color: '#00D9FF' }}>Vervix Dashboard</h1>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition"
+              className="px-4 py-2 text-white rounded-lg font-semibold transition"
+              style={{ backgroundColor: '#8B5CF6', hover: { backgroundColor: '#7C3AED' } }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#7C3AED'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#8B5CF6'}
             >
               Logout
             </button>
           </div>
-          <p className="text-gray-600 mt-2">Welcome, {user?.email}</p>
+          <p className="mt-2" style={{ color: '#00D9FF' }}>Welcome, {user?.email}</p>
         </div>
       </header>
 
@@ -162,35 +165,44 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Upload Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Upload CSV Data</h2>
+            <div className="rounded-lg shadow-lg p-6" style={{ backgroundColor: '#1A2A35' }}>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#00D9FF' }}>Upload CSV Data</h2>
 
               {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="mb-4 p-3 border-l-4 rounded" style={{ backgroundColor: '#2A1A1A', borderColor: '#FF6B6B', color: '#FF6B6B' }}>
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                <div className="mb-4 p-3 border-l-4 rounded" style={{ backgroundColor: '#1A2A1A', borderColor: '#00D9FF', color: '#00D9FF' }}>
                   {success}
                 </div>
               )}
 
               <form onSubmit={handleUpload} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: '#00D9FF' }}>
                     Select CSV File
                   </label>
-                  <input
-                    id="csvFile"
-                    type="file"
-                    accept=".csv"
-                    onChange={handleFileChange}
-                    required
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
+                  <div className="relative">
+                    <input
+                      id="csvFile"
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileChange}
+                      required
+                      className="block w-full text-sm"
+                      style={{ 
+                        color: '#FFFFFF',
+                        backgroundColor: 'transparent',
+                        padding: '10px',
+                        border: '2px dashed #00D9FF',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs mt-2" style={{ color: '#8B8B8B' }}>
                     CSV files with headers and data rows
                   </p>
                 </div>
@@ -198,15 +210,20 @@ export default function Dashboard() {
                 <button
                   type="submit"
                   disabled={!file || loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50"
+                  className="w-full font-semibold py-3 px-4 rounded-lg transition"
+                  style={{ 
+                    backgroundColor: file && !loading ? '#00D9FF' : '#4A4A4A',
+                    color: file && !loading ? '#0F1A1F' : '#8B8B8B',
+                    cursor: file && !loading ? 'pointer' : 'not-allowed'
+                  }}
                 >
                   {loading ? 'Processing...' : 'Analyze Data'}
                 </button>
               </form>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">Example CSV:</h3>
-                <pre className="text-xs text-gray-700 overflow-x-auto">
+              <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: '#0F1A1F', borderLeft: '4px solid #8B5CF6' }}>
+                <h3 className="font-semibold mb-2" style={{ color: '#00D9FF' }}>Example CSV:</h3>
+                <pre className="text-xs overflow-x-auto" style={{ color: '#00D9FF' }}>
 {`Company,Market,Revenue
 TechStartup,AI,500000
 DataCorp,Analytics,1200000
@@ -218,26 +235,25 @@ CloudSoft,Infrastructure,800000`}
 
           {/* Insights Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Market Insights</h2>
+            <div className="rounded-lg shadow-lg p-6" style={{ backgroundColor: '#1A2A35' }}>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#00D9FF' }}>Market Insights</h2>
 
               {!insights ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">
+                  <p style={{ color: '#8B8B8B' }}>
                     Upload a CSV file to see AI-generated market insights
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="prose prose-sm max-w-none">
-                    <div className="whitespace-pre-wrap text-gray-700 bg-gray-50 p-4 rounded-lg text-sm leading-relaxed">
+                  <div>
+                    <div className="whitespace-pre-wrap p-4 rounded-lg text-sm leading-relaxed" style={{ backgroundColor: '#0F1A1F', color: '#FFFFFF', borderLeft: '4px solid #8B5CF6' }}>
                       {typeof insights === 'string' ? insights : JSON.stringify(insights, null, 2)}
                     </div>
                   </div>
 
                   <button
                     onClick={() => {
-                      // Download insights as text
                       const element = document.createElement('a');
                       element.setAttribute(
                         'href',
@@ -251,7 +267,10 @@ CloudSoft,Infrastructure,800000`}
                       element.click();
                       document.body.removeChild(element);
                     }}
-                    className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition"
+                    className="mt-4 px-4 py-2 text-white font-semibold rounded-lg transition"
+                    style={{ backgroundColor: '#8B5CF6' }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#7C3AED'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#8B5CF6'}
                   >
                     Download Insights
                   </button>
