@@ -3,11 +3,13 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from database import get_db
-from models import InsightAnalysis, DataUpload, UploadedData
+from models import InsightAnalysis, DataUpload, UploadedData, User, UploadStatus
 from services.claude_insights import ClaudeInsightGenerator
+from services.csv_processor import CSVProcessor
 import uuid
 import logging
 import json
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,112 @@ class InsightResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class CSVAnalysisRequest(BaseModel):
+    user_id: str
+    data: list
+    headers: list
+    filename: str = "analysis.csv"
+
+@router.post("")
+async def analyze_csv(
+    request: CSVAnalysisRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Unified endpoint: Upload CSV data and generate insights in one call.
+    This is the main endpoint the frontend uses.
+    """
+    try:
+        user_id = request.user_id
+        csv_data = request.data
+        headers = request.headers
+        filename = request.filename
+        
+        # Verify user exists
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Validate data
+        if not csv_data or len(csv_data) == 0:
+            raise HTTPException(status_code=400, detail="No data provided")
+        
+        # Create upload record
+        upload_id = str(uuid.uuid4())
+        upload = DataUpload(
+            id=upload_id,
+            user_id=user_id,
+            filename=filename,
+            status=UploadStatus.COMPLETED.value,
+            row_count=len(csv_data),
+            columns=headers
+        )
+        db.add(upload)
+        
+        # Store data
+        uploaded_data = UploadedData(
+            id=str(uuid.uuid4()),
+            upload_id=upload_id,
+            raw_data=str(csv_data[:5]),  # Preview of first 5 rows
+            processed_data=csv_data  # Store all data
+        )
+        db.add(uploaded_data)
+        db.flush()  # Flush to get upload_id
+        
+        # Generate insights
+        insight_generator = ClaudeInsightGenerator()
+        
+        try:
+            insights, tokens, cost = insight_generator.generate_insights(
+                csv_data,
+                filename
+            )
+        except Exception as e:
+            logger.error(f"Insight generation failed: {str(e)}")
+            # Return error but still save the upload
+            db.commit()
+            raise HTTPException(status_code=500, detail=f"Insight generation failed: {str(e)}")
+        
+        # Store insights
+        insight_id = str(uuid.uuid4())
+        analysis = InsightAnalysis(
+            id=insight_id,
+            upload_id=upload_id,
+            insights_json=insights,
+            summary=insights.get("summary", ""),
+            key_findings=insights.get("key_findings", []),
+            recommendations=insights.get("recommendations", []),
+            api_tokens_used=tokens,
+            api_cost=cost
+        )
+        
+        db.add(analysis)
+        db.commit()
+        db.refresh(analysis)
+        
+        logger.info(f"CSV analyzed and insights generated: {insight_id} for user {user_id}")
+        
+        return {
+            "success": True,
+            "upload_id": upload_id,
+            "insights": {
+                "id": analysis.id,
+                "summary": analysis.summary,
+                "key_findings": analysis.key_findings,
+                "recommendations": analysis.recommendations,
+                "trends": insights.get("trends", []),
+                "opportunities": insights.get("opportunities", []),
+                "api_tokens_used": analysis.api_tokens_used,
+                "api_cost": analysis.api_cost
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"CSV analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate/{upload_id}")
 async def generate_insights(

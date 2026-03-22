@@ -163,10 +163,8 @@ export default function Login() {
 
           {/* Back to home */}
           <div className="mt-4 text-center">
-            <Link href="/">
-              <a className="text-gray-600 hover:text-gray-700 text-sm">
-                ← Back to home
-              </a>
+            <Link href="/" className="text-gray-600 hover:text-gray-700 text-sm">
+              ← Back to home
             </Link>
           </div>
         </div>

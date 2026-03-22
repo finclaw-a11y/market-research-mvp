@@ -33,9 +33,12 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,https://vervix.ai,https://vervix-landing-ehutnaylo-trevor-rileys-projects.vercel.app").split(",")
+cors_origins = [origin.strip() for origin in cors_origins]  # Clean up whitespace
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:3000").split(","),
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
